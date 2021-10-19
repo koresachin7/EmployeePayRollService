@@ -13,6 +13,10 @@ import java.util.Scanner;
  * @version - 16.0
  */
 public class EmployeePayRollService {
+    public EmployeePayRollService() {
+
+    }
+
     public enum IOService {
         CONSOLE_IO, FILE_IO, DB_IO, REST_IO
     }
@@ -54,13 +58,20 @@ public class EmployeePayRollService {
 
     //method to count entries in a file
     public long count(IOService ioService) {
-        if(ioService.equals(IOService.FILE_IO))
+        if (ioService.equals(IOService.FILE_IO))
             return new EmployeePayrollFileIOService().countEntries();
         return 0;
     }
+
     //method to print entries from a file
-    public void printData(IOService ioService){
-        if(ioService.equals(IOService.FILE_IO))
+    public void printData(IOService ioService) {
+        if (ioService.equals(IOService.FILE_IO))
             new EmployeePayrollFileIOService().printData();
+    }
+
+    public void readDataFromFile(IOService ioService) {
+        if (ioService.equals(IOService.CONSOLE_IO)) {
+            new EmployeePayrollFileIOService().readDataFromFile();
+        }
     }
 }

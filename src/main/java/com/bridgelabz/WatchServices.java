@@ -21,40 +21,38 @@ public class WatchServices {
     }
 
     //Register the given directory and all its sub-directories with the WatchService
-    private void scanAndRegisterDirectories(final Path start) throws IOException {
+    private void scanAndRegisterDirectories(final Path start) throws IOException{
         //register directory and sub-directories
         Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)  throws IOException{
                 registerDirWatchers(dir);
                 return FileVisitResult.CONTINUE;
             }
         });
     }
-
     // Register the given directory with the watch service
     private void registerDirWatchers(Path dir) throws IOException {
         WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
         dirWatchers.put(key, dir);
     }
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void processEvents() {
         while (true) {
             WatchKey key = null;
             try {
                 key = watcher.take();
-            } catch (InterruptedException x) {
+            }catch (InterruptedException x) {
                 return;
             }
             Path dir = dirWatchers.get(key);
-            if (dir == null)
+            if (dir==null)
                 continue;
             for (WatchEvent<?> event : key.pollEvents()) {
-                WatchEvent.Kind kind = event.kind();
-                Path name = ((WatchEvent<Path>) event).context();
+                WatchEvent.Kind kind =event.kind();
+                Path name = ((WatchEvent<Path>)event).context();
                 Path child = dir.resolve(name);
-                System.out.format("%s: %s\n", event.kind().name(), child); //print event
+                System.out.format("%s: %s\n",event.kind().name(), child); //print event
 
                 //if directory is created the register it and its sub-directories
                 if (kind == ENTRY_CREATE) {
@@ -63,7 +61,7 @@ public class WatchServices {
                             scanAndRegisterDirectories(child);
                     } catch (IOException x) {
                     }
-                } else if (kind.equals(ENTRY_DELETE)) {
+                }else if (kind.equals(ENTRY_DELETE)) {
                     if (Files.isDirectory(child))
                         dirWatchers.remove(key);
                 }

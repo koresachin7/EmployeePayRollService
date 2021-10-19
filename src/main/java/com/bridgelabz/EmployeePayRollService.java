@@ -53,13 +53,14 @@ public class EmployeePayRollService {
     }
 
     //method to count entries in a file
-    public long countEntries() {
-        long entries = 0;
-        try {
-            entries = Files.lines(new File("payroll-file.txt").toPath()).count();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return entries;
+    public long count(IOService ioService) {
+        if(ioService.equals(IOService.FILE_IO))
+            return new EmployeePayrollFileIOService().countEntries();
+        return 0;
+    }
+    //method to print entries from a file
+    public void printData(IOService ioService){
+        if(ioService.equals(IOService.FILE_IO))
+            new EmployeePayrollFileIOService().printData();
     }
 }
